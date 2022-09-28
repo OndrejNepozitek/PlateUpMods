@@ -15,26 +15,25 @@ public static class KitchenDesignLoader
 {
     private static SeededLayout _lastGeneratedLayout;
     
-    public static bool TryLoadKitchenDesign(KitchenDesign kitchenDesign)
+    public static bool TryLoadKitchenDesign(KitchenDesign kitchenDesign, string seed)
     {
         PostProcessDesign(kitchenDesign);
-
-        var random = new System.Random();
-        var seed = "design" + random.Next(10, 100);
+        
+        var seedObject = string.IsNullOrWhiteSpace(seed) 
+            ? Seed.Generate(new System.Random().Next())
+            : new Seed(seed);
+        
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        var seedObject = new Seed(seed);
 
-        CenterLayout(kitchenDesign.Blueprint);
-
-        Random.State state = Random.state;
+        var state = Random.state;
         Random.InitState(seedObject.IntValue);
         
         var layoutEntity = ConstructLayout(
             entityManager,
             kitchenDesign.Blueprint,
             kitchenDesign.Profile,
-            kitchenDesign.Setting,
-            seedObject.IntValue);
+            kitchenDesign.Setting
+        );
         var isValid = layoutEntity != Entity.Null;
 
         if (isValid)
@@ -53,8 +52,7 @@ public static class KitchenDesignLoader
         EntityManager em,
         LayoutBlueprint layoutBlueprintFixed,
         LayoutProfile profile,
-        RestaurantSetting setting,
-        int seed)
+        RestaurantSetting setting)
     {
         var entity = em.CreateEntity((ComponentType)typeof(CStartingItem), (ComponentType)typeof(CLayoutRoomTile),
             (ComponentType)typeof(CLayoutFeature), (ComponentType)typeof(CLayoutAppliancePlacement));

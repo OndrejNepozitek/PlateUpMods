@@ -10,6 +10,9 @@ namespace ONe.KitchenDesigner.Config;
 public static class ConfigHelper
 {
     private static ConfigEntry<string> _kitchenDesignConfig;
+    private static ConfigEntry<bool> _useRandomSeedConfig;
+    private static ConfigEntry<string> _fixedSeed;
+    
     private static string _kitchenDesignValue = "";
     private static string _kitchenDesignStatus = "";
     private static KitchenDesign _kitchenDesign;
@@ -25,6 +28,9 @@ public static class ConfigHelper
                     HideSettingName = true,
                     HideDefaultButton = true,
                 }));
+
+        _useRandomSeedConfig = config.Bind("Seeds", "UseRandomSeed", true, "Whether a random seed should be used for new runs with custom designs");
+        _fixedSeed = config.Bind("Seeds", "FixedSeed", "", "The seed that will be used if random seeds are disabled");
     }
 
     static void KitchenDesignDrawer(ConfigEntryBase entry)
@@ -72,7 +78,8 @@ public static class ConfigHelper
         {
             if (GUILayout.Button("Generate kitchen layout"))
             {
-                var success = KitchenDesignLoader.TryLoadKitchenDesign(_kitchenDesign);
+                var seed = _useRandomSeedConfig.Value ? null : _fixedSeed.Value;
+                var success = KitchenDesignLoader.TryLoadKitchenDesign(_kitchenDesign, seed);
 
                 if (success)
                 {
