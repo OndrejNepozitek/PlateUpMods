@@ -109,6 +109,12 @@ public static class KitchenDesignDecoder
             var to = new LayoutPosition(int.Parse(featureSplit[2]), int.Parse(featureSplit[3]));
             var featureType = (FeatureType)int.Parse(featureSplit[4]);
             var feature = new Feature(from, to, featureType);
+
+            if (featureType == FeatureType.FrontDoor && from.y < to.y)
+            {
+                feature = new Feature(to, from, featureType);
+            }
+            
             layout.Features.Add(feature);
         }
 
