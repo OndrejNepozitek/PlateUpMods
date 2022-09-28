@@ -1,4 +1,5 @@
 using BepInEx;
+using HarmonyLib;
 using ONe.KitchenDesigner.Config;
 
 namespace ONe.KitchenDesigner;
@@ -13,6 +14,9 @@ public class KitchenDesigner : BaseUnityPlugin
 
     private void Awake()
     {
+        var harmony = new Harmony(Guid);
+        harmony.PatchAll();
+        
         ConfigHelper.SetUp(Config);
     }
 }

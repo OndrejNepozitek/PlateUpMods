@@ -14,7 +14,8 @@ public static class ConfigHelper
     private static ConfigEntry<string> _fixedSeed;
     
     private static string _kitchenDesignValue = "";
-    private static string _kitchenDesignStatus = "";
+    private static string _kitchenDesignStatusText = "";
+    private static Status _kitchenDesignStatus = Status.Normal;
     private static KitchenDesign _kitchenDesign;
 
     public static void SetUp(ConfigFile config)
@@ -55,24 +56,44 @@ public static class ConfigHelper
         if (!hasPedestal)
         {
             canGenerateLayout = false;
-            _kitchenDesignStatus = "You must be at least level 6 and be inside the headquarters.";
+            _kitchenDesignStatus = Status.Failure;
+            _kitchenDesignStatusText = "You must be inside the headquarters (and be at least level 6).";
         } 
         else if (string.IsNullOrEmpty(_kitchenDesignValue))
         {
             canGenerateLayout = false;
-            _kitchenDesignStatus = "No custom design provided.";
+            _kitchenDesignStatus = Status.Normal;
+            _kitchenDesignStatusText = "No custom design provided.";
         }
         else if (_kitchenDesign == null)
         {
             canGenerateLayout = false;
-            _kitchenDesignStatus = "Kitchen Design could not be loaded. Please check that you copied it correctly. Also check the console.";
+            _kitchenDesignStatus = Status.Failure;
+            _kitchenDesignStatusText = "Kitchen Design could not be loaded - the description is not valid. Please check that you copied it correctly. Also check the console.";
         }
         else if (hasChanges)
         {
-            _kitchenDesignStatus = "Kitchen Design loaded, you can click the button below.";
+            _kitchenDesignStatus = Status.Normal;
+            _kitchenDesignStatusText = "Kitchen Design loaded, you can click the button below.";
         }
 
-        GUILayout.Label($"Status: {_kitchenDesignStatus}");
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"Status: ", GUILayout.ExpandWidth(false));
+
+        var style = new GUIStyle(GUI.skin.label);
+
+        if (_kitchenDesignStatus == Status.Failure)
+        {
+            style.normal.textColor = Color.red;
+        } 
+        else if (_kitchenDesignStatus == Status.Success)
+        {
+            style.normal.textColor = Color.green;
+        }
+        
+        GUILayout.Label(_kitchenDesignStatusText, style, GUILayout.ExpandWidth(true));
+
+        GUILayout.EndHorizontal();
 
         if (canGenerateLayout)
         {
@@ -83,11 +104,13 @@ public static class ConfigHelper
 
                 if (success)
                 {
-                    _kitchenDesignStatus = "Layout generated, you can close this window and play.";
+                    _kitchenDesignStatus = Status.Success;
+                    _kitchenDesignStatusText = "Layout generated, you can close this window and play.";
                 }
                 else
                 {
-                    _kitchenDesignStatus = "Layout not generated, please see the console for errors.";
+                    _kitchenDesignStatus = Status.Failure;
+                    _kitchenDesignStatusText = "Layout not generated, please see the console for errors.";
                 }
             }
         }
@@ -98,5 +121,12 @@ public static class ConfigHelper
 
 
         GUILayout.EndVertical();
+    }
+
+    private enum Status
+    {
+        Normal,
+        Success,
+        Failure,
     }
 }

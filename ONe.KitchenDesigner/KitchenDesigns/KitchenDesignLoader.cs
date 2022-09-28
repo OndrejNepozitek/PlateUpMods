@@ -14,38 +14,48 @@ namespace ONe.KitchenDesigner.KitchenDesigns;
 public static class KitchenDesignLoader
 {
     private static SeededLayout _lastGeneratedLayout;
+    public static bool IsGeneratingCustomDesign { get; private set; }
     
     public static bool TryLoadKitchenDesign(KitchenDesign kitchenDesign, string seed)
     {
-        PostProcessDesign(kitchenDesign);
+        IsGeneratingCustomDesign = true;
         
-        var seedObject = string.IsNullOrWhiteSpace(seed) 
-            ? Seed.Generate(new System.Random().Next())
-            : new Seed(seed);
-        
-        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        var state = Random.state;
-        Random.InitState(seedObject.IntValue);
-        
-        var layoutEntity = ConstructLayout(
-            entityManager,
-            kitchenDesign.Blueprint,
-            kitchenDesign.Profile,
-            kitchenDesign.Setting
-        );
-        var isValid = layoutEntity != Entity.Null;
-
-        if (isValid)
+        try
         {
-            var mapItem = CreateMapItem(layoutEntity, kitchenDesign.Setting, seedObject);
-            var seededLayout = new SeededLayout(seed, kitchenDesign.Blueprint, layoutEntity, mapItem);
-            ShowOnPedestal(seededLayout);
-        }
-        
-        Random.state = state;
+            PostProcessDesign(kitchenDesign);
 
-        return isValid;
+            var seedObject = string.IsNullOrWhiteSpace(seed)
+                ? Seed.Generate(new System.Random().Next())
+                : new Seed(seed);
+
+            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
+            var state = Random.state;
+            Random.InitState(seedObject.IntValue);
+
+            var layoutEntity = ConstructLayout(
+                entityManager,
+                kitchenDesign.Blueprint,
+                kitchenDesign.Profile,
+                kitchenDesign.Setting
+            );
+            var isValid = layoutEntity != Entity.Null;
+
+            if (isValid)
+            {
+                var mapItem = CreateMapItem(layoutEntity, kitchenDesign.Setting, seedObject);
+                var seededLayout = new SeededLayout(seed, kitchenDesign.Blueprint, layoutEntity, mapItem);
+                ShowOnPedestal(seededLayout);
+            }
+
+            Random.state = state;
+
+            return isValid;
+        }
+        finally
+        {
+            IsGeneratingCustomDesign = false;
+        }
     }
 
     private static Entity ConstructLayout(
