@@ -99,6 +99,7 @@
     <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).dll&quot; &quot;$(PluginDir)$(ProjectName).dll&quot;" />
     <Exec Command="copy /Y &quot;$(TargetDir)$(ProjectName).pdb&quot; &quot;$(PluginDir)$(ProjectName).pdb&quot;" />
     <Exec Command="$(SolutionDir)tools\pdb2mdb.exe $(PluginDir)$(ProjectName).dll" />
+    <Exec Command="C:\Personal\PlateUp\PlateUp.exe" />
   </Target>
 
 </Project>
