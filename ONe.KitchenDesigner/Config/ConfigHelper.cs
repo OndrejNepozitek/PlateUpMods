@@ -20,8 +20,8 @@ public static class ConfigHelper
     public static void SetUp(ConfigFile config)
     {
         _kitchenDesignConfig = config.Bind(
-            "Kitchen Designer", "Kitchen Design", "",
-            new ConfigDescription("Desc", null,
+            "KitchenDesign", "KitchenDesign", "",
+            new ConfigDescription("This value is currently not used", null,
                 new ConfigurationManagerAttributes
                 {
                     CustomDrawer = KitchenDesignDrawer,
