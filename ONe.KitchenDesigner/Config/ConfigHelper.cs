@@ -1,3 +1,4 @@
+using System.Linq;
 using BepInEx.Configuration;
 using Kitchen;
 using KitchenData;
@@ -15,8 +16,21 @@ public static class ConfigHelper
     
     private static string _kitchenDesignValue = "";
     private static string _kitchenDesignStatusText = "";
-    private static Status _kitchenDesignStatus = Status.Normal;
+    private static State _kitchenDesignState = State.NoDesignProvided;
     private static KitchenDesign _kitchenDesign;
+    
+    private static readonly State[] FailureStates = new State[]
+    {
+        State.GeneratingFailure,
+        State.IsOutsideHeadquarters,
+        State.SeededRunsNotAvailable,
+        State.KitchenDesignCouldNotBeLoaded
+    };
+    
+    private static readonly State[] SuccessStates = new State[]
+    {
+        State.GeneratingSuccess,
+    };
 
     public static void SetUp(ConfigFile config)
     {
@@ -46,7 +60,7 @@ public static class ConfigHelper
 
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         var hasPedestal = !entityManager.CreateEntityQuery(typeof(SSelectedLayoutPedestal)).IsEmpty;
-        var canGenerateLayout = true;
+        var hasSeededRunInfo = !entityManager.CreateEntityQuery((ComponentType)typeof(CSeededRunInfo)).IsEmpty;
 
         if (hasChanges)
         {
@@ -55,26 +69,44 @@ public static class ConfigHelper
         
         if (!hasPedestal)
         {
-            canGenerateLayout = false;
-            _kitchenDesignStatus = Status.Failure;
-            _kitchenDesignStatusText = "You must be inside the headquarters (and be at least level 6).";
+            _kitchenDesignState = State.IsOutsideHeadquarters;
+            _kitchenDesignStatusText = "You must be inside the headquarters.";
         } 
+        else if (!hasSeededRunInfo)
+        {
+            _kitchenDesignState = State.SeededRunsNotAvailable;
+            _kitchenDesignStatusText = "Seeded runs not available (you need to be at least level 5).";
+        }
         else if (string.IsNullOrEmpty(_kitchenDesignValue))
         {
-            canGenerateLayout = false;
-            _kitchenDesignStatus = Status.Normal;
+            _kitchenDesignState = State.NoDesignProvided;
             _kitchenDesignStatusText = "No custom design provided.";
         }
         else if (_kitchenDesign == null)
         {
-            canGenerateLayout = false;
-            _kitchenDesignStatus = Status.Failure;
+            _kitchenDesignState = State.KitchenDesignCouldNotBeLoaded;
             _kitchenDesignStatusText = "Kitchen Design could not be loaded - the description is not valid. Please check that you copied it correctly. Also check the console.";
         }
         else if (hasChanges)
         {
-            _kitchenDesignStatus = Status.Normal;
+            _kitchenDesignState = State.DesignLoaded;
             _kitchenDesignStatusText = "Kitchen Design loaded, you can click the button below.";
+        } 
+        else if (_kitchenDesignState == State.GeneratingLayout)
+        {
+            if (!KitchenDesignLoader.IsGenerating)
+            {
+                if (KitchenDesignLoader.WasLastGenerationSuccessful)
+                {
+                    _kitchenDesignState = State.GeneratingSuccess;
+                    _kitchenDesignStatusText = "Layout generated, you can close this window and play.";
+                }
+                else
+                {
+                    _kitchenDesignState = State.GeneratingFailure;
+                    _kitchenDesignStatusText = "Layout not generated, please see the console for errors.";
+                }
+            }
         }
 
         GUILayout.BeginHorizontal();
@@ -82,11 +114,11 @@ public static class ConfigHelper
 
         var style = new GUIStyle(GUI.skin.label);
 
-        if (_kitchenDesignStatus == Status.Failure)
+        if (FailureStates.Contains(_kitchenDesignState))
         {
             style.normal.textColor = Color.red;
         } 
-        else if (_kitchenDesignStatus == Status.Success)
+        else if (SuccessStates.Contains(_kitchenDesignState))
         {
             style.normal.textColor = Color.green;
         }
@@ -95,23 +127,13 @@ public static class ConfigHelper
 
         GUILayout.EndHorizontal();
 
-        if (canGenerateLayout)
+        if (_kitchenDesignState == State.DesignLoaded)
         {
             if (GUILayout.Button("Generate kitchen layout"))
             {
+                _kitchenDesignState = State.GeneratingLayout;
                 var seed = _useRandomSeedConfig.Value ? null : _fixedSeed.Value;
-                var success = KitchenDesignLoader.TryLoadKitchenDesign(_kitchenDesign, seed);
-
-                if (success)
-                {
-                    _kitchenDesignStatus = Status.Success;
-                    _kitchenDesignStatusText = "Layout generated, you can close this window and play.";
-                }
-                else
-                {
-                    _kitchenDesignStatus = Status.Failure;
-                    _kitchenDesignStatusText = "Layout not generated, please see the console for errors.";
-                }
+                KitchenDesignLoader.LoadKitchenDesign(_kitchenDesign, seed);
             }
         }
         else
@@ -123,10 +145,15 @@ public static class ConfigHelper
         GUILayout.EndVertical();
     }
 
-    private enum Status
+    private enum State
     {
-        Normal,
-        Success,
-        Failure,
+        IsOutsideHeadquarters,
+        SeededRunsNotAvailable,
+        NoDesignProvided,
+        KitchenDesignCouldNotBeLoaded,
+        DesignLoaded,
+        GeneratingLayout,
+        GeneratingSuccess,
+        GeneratingFailure,
     }
 }

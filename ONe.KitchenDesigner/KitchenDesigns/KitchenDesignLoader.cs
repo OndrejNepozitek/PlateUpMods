@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Kitchen;
@@ -13,48 +14,133 @@ namespace ONe.KitchenDesigner.KitchenDesigns;
 
 public static class KitchenDesignLoader
 {
-    private static SeededLayout _lastGeneratedLayout;
-    public static bool IsGeneratingCustomDesign { get; private set; }
+    /// <summary>
+    /// Signals whether the <see cref="KitchenDecoratorPatch"/> patch should run.
+    /// </summary>
+    public static bool ShouldPatchDecorations { get; internal set; }
     
-    public static bool TryLoadKitchenDesign(KitchenDesign kitchenDesign, string seed)
+    /// <summary>
+    /// Signals whether the <see cref="SetSeededRunOverridePatch_CreateSeededRun"/> patch should run.
+    /// </summary>
+    public static bool ShouldPatchCreateSeededRun { get; internal set; }
+    
+    /// <summary>
+    /// Signals whether the <see cref="SetSeededRunOverridePatch_OnUpdate"/> patch should run.
+    /// </summary>
+    public static bool IsWaitingForSetSeededRunUpdate { get; internal set; }
+    
+    /// <summary>
+    /// Signals whether a layout is currently being generated.
+    /// </summary>
+    public static bool IsGenerating { get; private set; }
+    
+    /// <summary>
+    /// Whether the last generation attempt was successful or not.
+    /// </summary>
+    public static bool WasLastGenerationSuccessful { get; private set; }
+
+    private static KitchenDesign _kitchenDesign;
+    private static Seed _seed;
+    
+    /// <summary>
+    /// This method is the entry point for spawning kitchen designs in the game.
+    /// </summary>
+    /// <remarks>
+    /// This method is asynchronous - no layout is generated immediately.
+    /// </remarks>
+    /// <param name="kitchenDesign">Kitchen designs to be loaded.</param>
+    /// <param name="seed">Seed to be used. If empty, a random seed will be generated.</param>
+    public static void LoadKitchenDesign(KitchenDesign kitchenDesign, string seed)
     {
-        IsGeneratingCustomDesign = true;
-        
         try
         {
+            IsGenerating = true;
+
+            _kitchenDesign = kitchenDesign;
             PostProcessDesign(kitchenDesign);
 
-            var seedObject = string.IsNullOrWhiteSpace(seed)
+            _seed = string.IsNullOrWhiteSpace(seed)
                 ? Seed.Generate(new System.Random().Next())
                 : new Seed(seed);
+            
+            var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            var query = entityManager.CreateEntityQuery((ComponentType)typeof(CSeededRunInfo));
 
+            if (query.IsEmpty)
+            {
+                IsGenerating = false;
+                WasLastGenerationSuccessful = false;
+            }
+            else
+            {
+                var seededRunInfoEntity = query.First();
+                var seededRunInfo = entityManager.GetComponentData<CSeededRunInfo>(seededRunInfoEntity);
+                seededRunInfo.IsSeedOverride = false;
+                seededRunInfo.FixedSeed = new Seed();
+                entityManager.SetComponentData(seededRunInfoEntity, seededRunInfo);
+                IsWaitingForSetSeededRunUpdate = true;
+            }
+        }
+        catch
+        {
+            IsGenerating = false;
+            WasLastGenerationSuccessful = false;
+        }
+    }
+
+    internal static void SetSeededRunUpdated()
+    {
+        ShouldPatchDecorations = true;
+        ShouldPatchCreateSeededRun = true;
+        
+        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+        var query = entityManager.CreateEntityQuery((ComponentType)typeof(CSeededRunInfo));
+        var seededRunInfoEntity = query.First();
+        var seededRunInfo = entityManager.GetComponentData<CSeededRunInfo>(seededRunInfoEntity);
+        seededRunInfo.IsSeedOverride = true;
+        seededRunInfo.FixedSeed = _seed;
+        entityManager.SetComponentData(seededRunInfoEntity, seededRunInfo);
+    }
+
+    internal static void LoadKitchenDesign(Seed seed, Entity pedestal)
+    {
+        try
+        {
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
             var state = Random.state;
-            Random.InitState(seedObject.IntValue);
+            Random.InitState(seed.IntValue);
 
             var layoutEntity = ConstructLayout(
                 entityManager,
-                kitchenDesign.Blueprint,
-                kitchenDesign.Profile,
-                kitchenDesign.Setting
+                _kitchenDesign.Blueprint,
+                _kitchenDesign.Profile,
+                _kitchenDesign.Setting
             );
             var isValid = layoutEntity != Entity.Null;
 
             if (isValid)
             {
-                var mapItem = CreateMapItem(layoutEntity, kitchenDesign.Setting, seedObject);
-                var seededLayout = new SeededLayout(seed, kitchenDesign.Blueprint, layoutEntity, mapItem);
-                ShowOnPedestal(seededLayout);
+                var mapItem = CreateMapItem(layoutEntity, _kitchenDesign.Setting, seed);
+                entityManager.AddComponentData<CItemHolder>(pedestal, (CItemHolder)mapItem);
+                entityManager.AddComponentData<CHeldBy>(mapItem, (CHeldBy)pedestal);
+                WasLastGenerationSuccessful = true;
+            }
+            else
+            {
+                WasLastGenerationSuccessful = false;
             }
 
             Random.state = state;
-
-            return isValid;
+            IsGenerating = false;
         }
-        finally
+        catch (Exception e)
         {
-            IsGeneratingCustomDesign = false;
+            // Reset the state if something goes wrong
+            ShouldPatchDecorations = false;
+            ShouldPatchCreateSeededRun = false;
+            IsGenerating = false;
+            throw;
         }
     }
 
@@ -106,25 +192,6 @@ public static class KitchenDesignLoader
     private static void PostProcessDesign(KitchenDesign design)
     {
         CenterLayout(design.Blueprint);
-    }
-
-    private static void ShowOnPedestal(SeededLayout layout)
-    {
-        var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-
-        if (_lastGeneratedLayout != null)
-        {
-            entityManager.DestroyEntity(_lastGeneratedLayout.MapItem);
-            entityManager.DestroyEntity(_lastGeneratedLayout.LayoutEntity);
-        }
-
-        var selectedLayoutPedestal =
-            entityManager.CreateEntityQuery(typeof(SSelectedLayoutPedestal)).GetSingletonEntity();
-
-        entityManager.AddComponentData<CItemHolder>(selectedLayoutPedestal, (CItemHolder)layout.MapItem);
-        entityManager.AddComponentData<CHeldBy>(layout.MapItem, (CHeldBy)selectedLayoutPedestal);
-
-        _lastGeneratedLayout = layout;
     }
 
     /// <summary>

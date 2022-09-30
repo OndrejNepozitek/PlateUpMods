@@ -16,10 +16,12 @@ public class KitchenDecoratorPatch
   [HarmonyPrefix]
   public static bool Decorate(Room room, LayoutProfile ___Profile, LayoutBlueprint ___Blueprint, List<CLayoutAppliancePlacement> ___Decorations, ref bool __result)
   {
-    if (!KitchenDesignLoader.IsGeneratingCustomDesign)
+    if (!KitchenDesignLoader.ShouldPatchDecorations)
     {
       return true;
     }
+
+    KitchenDesignLoader.ShouldPatchDecorations = false;
     
     Queue<GameDataObject> gameDataObjectQueue = new Queue<GameDataObject>((IEnumerable<GameDataObject>) ___Profile.RequiredAppliances);
     List<Vector3> used_tiles = new List<Vector3>(___Decorations.Select<CLayoutAppliancePlacement, Vector3>((Func<CLayoutAppliancePlacement, Vector3>) (d => d.Position)));
