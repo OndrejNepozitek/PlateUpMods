@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq;
 using BepInEx.Configuration;
 using Kitchen;
@@ -17,6 +18,7 @@ public static class ConfigHelper
     private static string _kitchenDesignValue = "";
     private static string _kitchenDesignStatusText = "";
     private static State _kitchenDesignState = State.NoDesignProvided;
+    private static Stopwatch _layoutGeneratedStopwatch = new Stopwatch();
     private static KitchenDesign _kitchenDesign;
     
     private static readonly State[] FailureStates = new State[]
@@ -31,6 +33,14 @@ public static class ConfigHelper
     {
         State.GeneratingSuccess,
     };
+    
+    private static readonly State[] ReadToGenerateStates = new State[]
+    {
+        State.DesignLoaded,
+        State.GeneratingSuccess,
+        State.GeneratingFailure,
+    };
+    
 
     public static void SetUp(ConfigFile config)
     {
@@ -86,6 +96,8 @@ public static class ConfigHelper
         {
             if (!KitchenDesignLoader.IsGenerating)
             {
+                _layoutGeneratedStopwatch.Restart();
+                
                 if (KitchenDesignLoader.WasLastGenerationSuccessful)
                 {
                     _kitchenDesignState = State.GeneratingSuccess;
@@ -96,6 +108,13 @@ public static class ConfigHelper
                     _kitchenDesignState = State.GeneratingFailure;
                     _kitchenDesignStatusText = "Layout not generated, please see the console for errors.";
                 }
+            }
+        }
+        else if (_kitchenDesignState is State.GeneratingSuccess or State.GeneratingFailure)
+        {
+            if (_layoutGeneratedStopwatch.ElapsedMilliseconds > 5000 && _kitchenDesign != null)
+            {
+                _kitchenDesignState = State.DesignLoaded;
             }
         }
         else
@@ -131,7 +150,7 @@ public static class ConfigHelper
 
         GUILayout.EndHorizontal();
 
-        if (_kitchenDesignState == State.DesignLoaded)
+        if (ReadToGenerateStates.Contains(_kitchenDesignState))
         {
             if (GUILayout.Button("Generate kitchen layout"))
             {
