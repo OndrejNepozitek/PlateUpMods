@@ -1,4 +1,5 @@
 using BepInEx;
+using BepInEx.Logging;
 using HarmonyLib;
 using ONe.KitchenDesigner.Config;
 
@@ -11,9 +12,13 @@ public class KitchenDesigner : BaseUnityPlugin
     private const string Guid = "ONe.KitchenDesigner";
     private const string Name = "ONe.KitchenDesigner";
     private const string Version = "1.0.0";
+    
+    internal new static ManualLogSource Log;
 
     private void Awake()
     {
+        Log = Logger;
+        
         var harmony = new Harmony(Guid);
         harmony.PatchAll();
         

@@ -29,8 +29,8 @@ public static class KitchenDesignDecoder
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Cannot decode kitchen design. Please make sure that you copied the text correctly.");
-            Console.WriteLine($"Error: {e.Message}");
+            KitchenDesigner.Log.LogError($"Cannot decode kitchen design. Please make sure that you copied the text correctly.");
+            KitchenDesigner.Log.LogError($"Error: {e.Message}");
             
             kitchenDesign = null;
             return false;
@@ -69,7 +69,7 @@ public static class KitchenDesignDecoder
         var sizeY = int.Parse(sizes[1]);
         
         // Tiles
-        var roomSections = sections[4].Split(',').ToList();
+        var roomSections = sections[4].Split(new []{','}, StringSplitOptions.RemoveEmptyEntries).ToList();
 
         var counter = 0;
         for (var i = 0; i < roomSections.Count; i++)
@@ -101,7 +101,7 @@ public static class KitchenDesignDecoder
         
         // Features
         layout.Features = new List<Feature>();
-        var features = sections[5].Split(';').ToList();
+        var features = sections[5].Split(new []{';'}, StringSplitOptions.RemoveEmptyEntries).ToList();
         foreach (var featureString in features)
         {
             var featureSplit = featureString.Split(',');

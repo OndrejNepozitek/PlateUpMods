@@ -82,16 +82,6 @@ public static class ConfigHelper
             _kitchenDesignState = State.NoDesignProvided;
             _kitchenDesignStatusText = "No custom design provided.";
         }
-        else if (_kitchenDesign == null)
-        {
-            _kitchenDesignState = State.KitchenDesignCouldNotBeLoaded;
-            _kitchenDesignStatusText = "Kitchen Design could not be loaded - the description is not valid. Please check that you copied it correctly. Also check the console.";
-        }
-        else if (hasChanges)
-        {
-            _kitchenDesignState = State.DesignLoaded;
-            _kitchenDesignStatusText = "Kitchen Design loaded, you can click the button below.";
-        } 
         else if (_kitchenDesignState == State.GeneratingLayout)
         {
             if (!KitchenDesignLoader.IsGenerating)
@@ -108,6 +98,20 @@ public static class ConfigHelper
                 }
             }
         }
+        else
+        {
+            if (_kitchenDesign == null)
+            {
+                _kitchenDesignState = State.KitchenDesignCouldNotBeLoaded;
+                _kitchenDesignStatusText = "Kitchen Design could not be loaded - the description is not valid. Please check that you copied it correctly. Also check the console.";
+            }
+            else if (hasChanges || (_kitchenDesignState != State.GeneratingSuccess && _kitchenDesignState != State.GeneratingFailure))
+            {
+                _kitchenDesignState = State.DesignLoaded;
+                _kitchenDesignStatusText = "Kitchen Design loaded, you can click the button below.";
+            }
+        } 
+
 
         GUILayout.BeginHorizontal();
         GUILayout.Label($"Status: ", GUILayout.ExpandWidth(false));

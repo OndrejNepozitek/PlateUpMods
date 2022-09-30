@@ -157,7 +157,7 @@ public static class KitchenDesignLoader
         var flag = false;
         for (int index = 0; index < CreateLayoutHelper.MapAttemptsMax; ++index)
         {
-            Console.WriteLine($"Loading kitchen design, attempt {index + 1}");
+            KitchenDesigner.Log.LogInfo($"Loading kitchen design, attempt {index + 1}");
             
             try
             {
@@ -169,14 +169,13 @@ public static class KitchenDesignLoader
             }
             catch (LayoutFailureException ex)
             {
-                Console.WriteLine(ex.Message);
+                KitchenDesigner.Log.LogInfo(ex.Message);
             }
         }
 
         if (!flag || layoutDecorator?.Decorations == null)
         {
-            Console.WriteLine((object)string.Format("Giving up after {0} attempts",
-                (object)CreateLayoutHelper.MapAttemptsMax));
+            KitchenDesigner.Log.LogDebug($"Giving up after {(object)CreateLayoutHelper.MapAttemptsMax} attempts");
             em.DestroyEntity(entity);
             return new Entity();
         }
