@@ -1,3 +1,4 @@
+using System;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
@@ -23,5 +24,10 @@ public class TweakPlugin : BaseUnityPlugin
         harmony.PatchAll();
         
         ConfigHelper.SetUp(Config);
+    }
+
+    private void Update()
+    {   
+        ConfigHelper.Update();
     }
 }
