@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ONe.KitchenDesigner", "ONe.KitchenDesigner\ONe.KitchenDesigner.csproj", "{AC17A68F-5B38-41F3-AE5B-E29A8B5A6ED1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ONe.Tweak", "ONe.Tweak\ONe.Tweak.csproj", "{4381A045-1500-4328-9C75-5508C106EFAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{AC17A68F-5B38-41F3-AE5B-E29A8B5A6ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC17A68F-5B38-41F3-AE5B-E29A8B5A6ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC17A68F-5B38-41F3-AE5B-E29A8B5A6ED1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4381A045-1500-4328-9C75-5508C106EFAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4381A045-1500-4328-9C75-5508C106EFAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4381A045-1500-4328-9C75-5508C106EFAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4381A045-1500-4328-9C75-5508C106EFAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
