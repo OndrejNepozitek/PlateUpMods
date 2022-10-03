@@ -1,41 +1,34 @@
+using System.Collections.Generic;
 using BepInEx.Configuration;
 using Kitchen.ONe.Tweak.Tweaks;
+using ONe.Tweak;
 using UnityEngine;
 
 namespace Kitchen.ONe.Tweak.Config;
 
 public static class ConfigHelper
 {
-    private static ConfigEntry<string> _skipDayConfig;
-    private static ConfigEntry<KeyboardShortcut> _skipDayConfigShortcut;
+    private static List<TweakCommandConfig> _configs;
 
     public static void SetUp(ConfigFile config)
     {
-        _skipDayConfig = config.Bind(
-            "Creative", "SkipDay", "",
-            new ConfigDescription("This value is currently not used", null,
-                new ConfigurationManagerAttributes
-                {
-                    CustomDrawer = SkipDayDrawer,
-                    HideSettingName = true,
-                    HideDefaultButton = true,
-                }));
-        _skipDayConfigShortcut = config.Bind("Creative", "SkipDayShortcut", new KeyboardShortcut(KeyCode.None));
+        _configs = new List<TweakCommandConfig>()
+        {
+            new SkipDayCommandConfig(),
+        };
+
+        foreach (var tweakConfig in _configs)
+        {
+            tweakConfig.Config = config;
+            tweakConfig.Init();
+        }
     }
 
     public static void Update()
     {
-        if (_skipDayConfigShortcut.Value.IsDown())
+        foreach (var config in _configs)
         {
-            SkipDayTweak.Run();
-        }
-    }
-
-    private static void SkipDayDrawer(ConfigEntryBase obj)
-    {
-        if (GUILayout.Button("Skip day", GUILayout.ExpandWidth(true)))
-        {
-            SkipDayTweak.Run();
+            config.Update();
         }
     }
 }

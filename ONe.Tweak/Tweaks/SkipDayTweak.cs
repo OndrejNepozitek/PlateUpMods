@@ -1,5 +1,7 @@
 using System;
+using BepInEx.Configuration;
 using HarmonyLib;
+using ONe.Tweak;
 using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
@@ -38,5 +40,26 @@ public static class SkipDayTweak
             Console.WriteLine("SkipDaySystem.OnDestroy");
             _shouldRun = false;
         }
+    }
+}
+
+public class SkipDayCommandConfig : TweakCommandConfig
+{
+    public override string Section => "Creative";
+    
+    public override string Name => "Skip day";
+
+    public override string ButtonText => "Skip day";
+    
+    public override ConfigEntry<KeyboardShortcut> KeyboardConfig { get; protected set; }
+    
+    public override void Init()
+    {
+        KeyboardConfig = BindMainButton();
+    }
+
+    protected override void Run()
+    {
+        SkipDayTweak.Run();
     }
 }
