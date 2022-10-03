@@ -43,22 +43,18 @@ public static class SkipDayTweak
     }
 }
 
-public class SkipDayCommandConfig : TweakCommandConfig
+public class SkipDayGUIConfig : TweakGUIConfig
 {
     public override string Section => "Creative";
     
     public override string Name => "Skip day";
 
-    public override string ButtonText => "Skip day";
-    
-    public override ConfigEntry<KeyboardShortcut> KeyboardConfig { get; protected set; }
-    
     public override void Init()
     {
-        KeyboardConfig = BindMainButton();
+        BindButton("Skip day", Run);
     }
 
-    protected override void Run()
+    private void Run()
     {
         SkipDayTweak.Run();
     }

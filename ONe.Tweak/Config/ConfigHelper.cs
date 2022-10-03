@@ -8,13 +8,13 @@ namespace Kitchen.ONe.Tweak.Config;
 
 public static class ConfigHelper
 {
-    private static List<TweakCommandConfig> _configs;
+    private static List<TweakGUIConfig> _configs;
 
     public static void SetUp(ConfigFile config)
     {
-        _configs = new List<TweakCommandConfig>()
+        _configs = new List<TweakGUIConfig>()
         {
-            new SkipDayCommandConfig(),
+            new SkipDayGUIConfig(),
         };
 
         foreach (var tweakConfig in _configs)
