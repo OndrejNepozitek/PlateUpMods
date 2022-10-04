@@ -15,6 +15,8 @@ public static class ConfigHelper
         _configs = new List<TweakGUIConfig>()
         {
             new SkipDayGUIConfig(),
+            new RestartAnyDayConfig(),
+            new StartPracticeGUIConfig(),
         };
 
         foreach (var tweakConfig in _configs)
