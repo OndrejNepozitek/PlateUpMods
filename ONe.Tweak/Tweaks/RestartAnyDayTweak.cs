@@ -34,7 +34,7 @@ public class RestartAnyDayTweak
                 .First(x => x.GetIndexParameters().Length == 1 &&
                             x.GetIndexParameters()[0].ParameterType == typeof(PopupType)); 
 
-            var getter = indexerProperty.GetMethod;
+            var getter = indexerProperty.GetMethod; 
 
             return getter;
         }

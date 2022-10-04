@@ -17,6 +17,7 @@ public static class ConfigHelper
             new SkipDayGUIConfig(),
             new RestartAnyDayConfig(),
             new StartPracticeGUIConfig(),
+            new NoCollisionsGUIConfig(),
         };
 
         foreach (var tweakConfig in _configs)
