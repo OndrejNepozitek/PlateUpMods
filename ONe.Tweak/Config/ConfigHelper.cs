@@ -18,6 +18,7 @@ public static class ConfigHelper
             new RestartAnyDayConfig(),
             new StartPracticeGUIConfig(),
             new NoCollisionsGUIConfig(),
+            new SeparateKitchenSeedsGUIConfig(),
         };
 
         foreach (var tweakConfig in _configs)
