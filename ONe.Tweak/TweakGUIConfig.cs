@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using BepInEx;
 using BepInEx.Configuration;
 using UnityEngine;
 
@@ -40,7 +38,12 @@ public abstract class TweakGUIConfig
 
     protected ConfigEntry<T> Bind<T>(string name, T defaultValue, ConfigDescription configDescription = null)
     {
-        return Config.Bind(Section, $"{Name} - {name}", defaultValue, configDescription);
+        if (!string.IsNullOrEmpty(Name))
+        {
+            name = $"{Name} - {name}";
+        }
+        
+        return Config.Bind(Section, name, defaultValue, configDescription);
     }
 
     protected ConfigEntry<KeyboardShortcut> BindButton(string text, Action action)
