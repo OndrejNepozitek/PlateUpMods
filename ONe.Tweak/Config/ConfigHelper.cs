@@ -17,7 +17,7 @@ public static class ConfigHelper
             new SkipDayGUIConfig(),
             new RestartAnyDayConfig(),
             new StartPracticeGUIConfig(),
-            new NoCollisionsGUIConfig(),
+            new GhostModeGUIConfig(),
             new SeparateKitchenSeedsGUIConfig(),
         };
 
