@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using BepInEx.Configuration;
 using Kitchen.ONe.Tweak.Tweaks;
@@ -26,6 +27,21 @@ public static class ConfigHelper
             tweakConfig.Config = config;
             tweakConfig.Init();
         }
+    }
+    
+    public static Action GetAction(ConfigEntry<KeyboardShortcut> entry)
+    {
+        foreach (var config in _configs)
+        {
+            var action = config.GetAction(entry);
+
+            if (action != null)
+            {
+                return action;
+            }
+        }
+
+        return null;
     }
 
     public static void Update()

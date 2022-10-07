@@ -30,13 +30,6 @@ public static class GhostModeTweak
 
     private class GhostModeSystem : TweakRestaurantSystem<GhostModeSystem>
     {
-        private EntityQuery _layoutSingletonQuery;
-
-        protected override void Initialise()
-        {
-            _layoutSingletonQuery = GetEntityQuery(ComponentType.ReadOnly<SLayout>());
-        }
-
         protected override void OnUpdate()
         {
             if (Has<SIsNightFirstUpdate>() && GhostModeGUIConfig.EnableOnPreparationStart.Value && !_ghostModeEnabled)
@@ -46,7 +39,7 @@ public static class GhostModeTweak
             
             if (Has<SIsDayFirstUpdate>() && GhostModeGUIConfig.DisableOnPreparationEnd.Value && _ghostModeEnabled)
             {
-                ToggleCollisions();
+                ToggleCollisions(); 
             }
         }
     }
