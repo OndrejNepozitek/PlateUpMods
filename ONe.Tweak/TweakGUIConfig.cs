@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BepInEx.Configuration;
 using UnityEngine;
 
@@ -27,13 +28,28 @@ public abstract class TweakGUIConfig
             }
         }
     }
+
+    public Action GetAction(ConfigEntry<KeyboardShortcut> entry)
+    {
+        foreach (var button in _buttons)
+        {
+            if (button.Config == entry)
+            {
+                return button.Action;
+            }
+        }
+
+        return null;
+    }
     
     protected virtual void ShowCommandGUI(ConfigEntryBase obj, ButtonConfig button)
     {
-        if (GUILayout.Button(button.Text))
-        {
-            button.Action();
-        }
+        // if (GUILayout.Button(button.Text))
+        // {
+        //     button.Action();
+        // }
+
+        var domain = AppDomain.CurrentDomain.GetAssemblies().ToList();
     }
 
     protected ConfigEntry<T> Bind<T>(string name, T defaultValue, ConfigDescription configDescription = null)
