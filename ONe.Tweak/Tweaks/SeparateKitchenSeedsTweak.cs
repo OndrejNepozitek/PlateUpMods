@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
 using Kitchen.ONe.Tweak.Config.Sections;
+using Kitchen.ONe.Tweak.Utils;
 using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
@@ -32,6 +33,36 @@ public static class SeparateKitchenSeedsTweak
                 : new Seed(SeparateSeedsConfig.Instance.FixedSeed.Value);
             seededRunInfo.FixedSeed = seed;
             entityManager.SetComponentData(seedFixer, seededRunInfo);
+        }
+    }
+
+    [UpdateBefore(typeof(SetSeededRunOverride))]
+    private class SameSeedFixSystem : TweakRestaurantSystem<SameSeedFixSystem>
+    {
+        private EntityQuery _seedFixers;
+        private Seed _previousSeed;
+
+        protected override void Initialise()
+        {
+            _seedFixers = this.GetEntityQuery((ComponentType) typeof (CSeededRunInfo));
+        }
+
+        protected override void OnUpdate()
+        {
+            if (_seedFixers.IsEmpty)
+            {
+                return;
+            }
+            
+            var cSeededRunInfo = _seedFixers.First<CSeededRunInfo>();
+            var fixedSeed = cSeededRunInfo.FixedSeed;
+
+            if (fixedSeed != _previousSeed)
+            {
+                Console.WriteLine($"Detected new seed: {fixedSeed.StrValue}");
+            }
+
+            _previousSeed = fixedSeed;
         }
     }
 }
