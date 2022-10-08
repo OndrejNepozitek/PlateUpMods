@@ -35,26 +35,7 @@ public static class SkipDayTweak
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            
-            Console.WriteLine("SkipDaySystem.OnDestroy");
             _shouldRun = false;
         }
-    }
-}
-
-public class SkipDayGUIConfig : TweakGUIConfig
-{
-    public override string Section => "Creative";
-    
-    public override string Name => "Skip day";
-
-    public override void Init()
-    {
-        BindButton("Skip day", Run);
-    }
-
-    private void Run()
-    {
-        SkipDayTweak.Run();
     }
 }
