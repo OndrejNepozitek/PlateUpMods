@@ -3,39 +3,27 @@ using ONe.Tweak;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
 
-public class StartPracticeTweak
+public static class StartPracticeTweak
 {
-    public static bool ShouldRun;
+    private static bool _shouldRun;
+
+    public static void Run()
+    {
+        _shouldRun = true;
+    }
     
     [HarmonyPatch(typeof(StartPracticeMode), "AfterRun")]
     public class StartPracticeModePatch
     {
         public static bool Prefix(ref bool ___ShouldPrompt)
         {
-            if (ShouldRun)
+            if (_shouldRun)
             {
-                ShouldRun = false;
+                _shouldRun = false;
                 ___ShouldPrompt = true;
             }
 
             return true;
         }
-    }
-}
-
-public class StartPracticeGUIConfig : TweakGUIConfig
-{
-    public override string Section => "Creative";
-    
-    public override string Name => "Start practice";
-
-    public override void Init()
-    {
-        BindButton("Start practice", Run);
-    }
-
-    private void Run()
-    {
-        StartPracticeTweak.ShouldRun = true;
     }
 }

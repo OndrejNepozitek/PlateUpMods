@@ -92,10 +92,6 @@
       <HintPath>..\..\PlateUp\PlateUp_Data\Managed\XNode.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Config\Sections" />
-  </ItemGroup>
 
   <PropertyGroup>
     <PluginDir>C:\Personal\PlateUp\BepInEx\plugins\</PluginDir>

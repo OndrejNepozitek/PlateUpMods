@@ -1,19 +1,18 @@
 using System;
-using BepInEx.Configuration;
 using HarmonyLib;
-using ONe.Tweak;
+using Kitchen.ONe.Tweak.Config.Sections;
 using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
 
-public class SeparateKitchenSeedsTweak
+public static class SeparateKitchenSeedsTweak
 {
     [HarmonyPatch(typeof(SetSeededRunOverride), "CreateMapItem")]
-    public class ChangeLayoutSeedPatch
+    private static class ChangeLayoutSeedPatch
     {
         public static void Prefix(ref Seed seed)
         {
-            if (SeparateKitchenSeedsGUIConfig.IsEnabled == false)
+            if (!SeparateSeedsConfig.Instance.Enabled.Value)
             {
                 return;
             }
@@ -28,25 +27,11 @@ public class SeparateKitchenSeedsTweak
 
             var seedFixer = seedFixers.First();
             var seededRunInfo = entityManager.GetComponentData<CSeededRunInfo>(seedFixer);
-            seed = Seed.Generate(new Random().Next());
+            seed = string.IsNullOrWhiteSpace(SeparateSeedsConfig.Instance.FixedSeed.Value) || SeparateSeedsConfig.Instance.UseRandomSeed.Value
+                ? Seed.Generate(new Random().Next())
+                : new Seed(SeparateSeedsConfig.Instance.FixedSeed.Value);
             seededRunInfo.FixedSeed = seed;
             entityManager.SetComponentData(seedFixer, seededRunInfo);
         }
-    }
-}
-
-public class SeparateKitchenSeedsGUIConfig : TweakGUIConfig
-{
-    public override string Section => "Seeds";
-    
-    public override string Name => "Separate kitchen seeds";
-    
-    private static ConfigEntry<bool> _enableConfig;
-
-    public static bool IsEnabled => _enableConfig.Value;
-    
-    public override void Init()
-    {
-        _enableConfig = Bind("Enabled", false);
     }
 }

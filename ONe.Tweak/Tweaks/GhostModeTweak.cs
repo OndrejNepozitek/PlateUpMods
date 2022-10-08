@@ -1,6 +1,7 @@
 using System.Reflection;
 using BepInEx.Configuration;
 using HarmonyLib;
+using Kitchen.ONe.Tweak.Config.Sections;
 using Kitchen.ONe.Tweak.Utils;
 using ONe.Tweak;
 using Unity.Entities;
@@ -32,12 +33,12 @@ public static class GhostModeTweak
     {
         protected override void OnUpdate()
         {
-            if (Has<SIsNightFirstUpdate>() && GhostModeGUIConfig.EnableOnPreparationStart.Value && !_ghostModeEnabled)
+            if (Has<SIsNightFirstUpdate>() && GhostModeConfig.Instance.EnableOnPreparationStart.Value && !_ghostModeEnabled)
             {
                 ToggleCollisions();
             }
             
-            if (Has<SIsDayFirstUpdate>() && GhostModeGUIConfig.DisableOnPreparationEnd.Value && _ghostModeEnabled)
+            if (Has<SIsDayFirstUpdate>() &&  GhostModeConfig.Instance.DisableOnPreparationEnd.Value && _ghostModeEnabled)
             {
                 ToggleCollisions(); 
             }
@@ -54,36 +55,10 @@ public static class GhostModeTweak
 
         public static void Postfix(ref Bounds __result)
         {
-            if (_ghostModeEnabled)
+            if (_ghostModeEnabled && GhostModeConfig.Instance.ResizeBoundsWhenEnabled.Value)
             {
                 __result = new Bounds(__result.center, __result.size + new Vector3(4, 0, 6));
             }
         }
-    }
-}
-
-public class GhostModeGUIConfig : TweakGUIConfig
-{
-    public override string Section => "GhostMode";
-
-    public override string Name => "";
-
-    public static ConfigEntry<bool> EnableOnPreparationStart;
-
-    public static ConfigEntry<bool> DisableOnPreparationEnd;
-    
-    public static ConfigEntry<bool> ResizeBoundsWhenInGhostMode;
-
-    public override void Init()
-    {
-        BindButton("Toggle ghost mode", Run);
-        EnableOnPreparationStart = Bind("EnableOnPreparationStart", false);
-        DisableOnPreparationEnd = Bind("DisableOnPreparationEnd", true);
-        DisableOnPreparationEnd = Bind("ResizeBoundsWhenInGhostMode", true);
-    }
-
-    private void Run()
-    {
-        GhostModeTweak.ToggleCollisions();
     }
 }
