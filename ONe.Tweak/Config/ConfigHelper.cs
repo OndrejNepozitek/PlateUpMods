@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BepInEx.Configuration;
+using Kitchen.ONe.Tweak.Config.Sections;
 using Kitchen.ONe.Tweak.Tweaks;
 using ONe.Tweak;
 using UnityEngine;
@@ -9,29 +10,21 @@ namespace Kitchen.ONe.Tweak.Config;
 
 public static class ConfigHelper
 {
-    private static List<TweakGUIConfig> _configs;
+    private static List<ConfigSection> _configSections;
 
     public static void SetUp(ConfigFile config)
     {
-        _configs = new List<TweakGUIConfig>()
+        _configSections = new List<ConfigSection>()
         {
-            new SkipDayGUIConfig(),
-            new RestartAnyDayConfig(),
-            new StartPracticeGUIConfig(),
-            new GhostModeGUIConfig(),
-            new SeparateKitchenSeedsGUIConfig(),
+            new GhostModeConfig(config),
+            new PreparationPhaseConfig(config),
+            new SeparateSeedsConfig(config),
         };
-
-        foreach (var tweakConfig in _configs)
-        {
-            tweakConfig.Config = config;
-            tweakConfig.Init();
-        }
     }
     
     public static Action GetAction(ConfigEntry<KeyboardShortcut> entry)
     {
-        foreach (var config in _configs)
+        foreach (var config in _configSections)
         {
             var action = config.GetAction(entry);
 
@@ -46,7 +39,7 @@ public static class ConfigHelper
 
     public static void Update()
     {
-        foreach (var config in _configs)
+        foreach (var config in _configSections)
         {
             config.Update();
         }
