@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using BepInEx.Configuration;
 using HarmonyLib;
+using Kitchen.ONe.Tweak.Config.Sections;
 using KitchenData;
 using ONe.Tweak;
 using Unity.Entities;
@@ -16,7 +17,7 @@ public class RestartAnyDayTweak
     {
         public static void Postfix(ref bool __result)
         {
-            if (RestartAnyDayConfig.IsEnabled)
+            if (CreativeModeConfig.Instance.RestartAnyDay.Value)
             {
                 RestartAnyDaySystem.Instance.RestartDay();
                 __result = true;
@@ -78,21 +79,5 @@ public class RestartAnyDayTweak
                 TotalLives = singleton.TotalLives
             });
         }
-    }
-}
-
-public class RestartAnyDayConfig : TweakGUIConfig
-{
-    public override string Section => "General";
-
-    public override string Name => "RestartAnyDay";
-
-    private static ConfigEntry<bool> _enableConfig;
-
-    public static bool IsEnabled => _enableConfig.Value;
-
-    public override void Init()
-    {
-        _enableConfig = Bind("Enabled", false);
     }
 }

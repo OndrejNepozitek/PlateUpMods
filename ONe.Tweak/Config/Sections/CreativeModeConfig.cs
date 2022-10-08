@@ -7,6 +7,8 @@ public class CreativeModeConfig : ConfigSection<CreativeModeConfig>
 {
     public override string SectionName => ConfigSections.CreativeMode;
     
+    public ConfigEntry<bool> RestartAnyDay { get; }
+    
     public ConfigEntry<bool> EnableAdditionalCards { get; }
 
     public ConfigEntry<int> AdditionalCustomerDishCards { get; }
@@ -15,6 +17,8 @@ public class CreativeModeConfig : ConfigSection<CreativeModeConfig>
     
     public CreativeModeConfig(ConfigFile config) : base(config)
     {
+        RestartAnyDay = Bind("RestartAnyDay", true, "Whether any day can be restart the same way as the first 3 days.");
+        
         BindCommand("SkipDay", KeyboardShortcut.Empty, SkipDay, "Skip the current day");
         
         EnableAdditionalCards = Bind("EnableAdditionalCards", false, "Whether choose from additional customer, dish and franchise card.");
