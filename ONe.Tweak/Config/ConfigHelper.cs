@@ -19,6 +19,7 @@ public static class ConfigHelper
             new GhostModeConfig(config),
             new PreparationPhaseConfig(config),
             new SeparateSeedsConfig(config),
+            new CreativeModeConfig(config),
         };
     }
     
