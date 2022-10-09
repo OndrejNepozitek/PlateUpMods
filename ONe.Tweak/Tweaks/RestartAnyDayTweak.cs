@@ -1,32 +1,59 @@
-using System;
 using System.Linq;
 using System.Reflection;
-using BepInEx.Configuration;
 using HarmonyLib;
 using Kitchen.ONe.Tweak.Config.Sections;
+using Kitchen.ONe.Tweak.Utils;
 using KitchenData;
-using ONe.Tweak;
 using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
 
-public class RestartAnyDayTweak
+public static class RestartAnyDayTweak
 {
+    private static bool _changePopup;
+    
+    /// <summary>
+    /// When the game asks if the player can restart the day due to low day number (3 or less), return true.
+    /// </summary>
     [HarmonyPatch(typeof(CheckGameOverFromLife), "RescuedByDay")]
-    private class CheckGameOverFromLife_RescuedByDay_Patch
+    private static class RescuedByDayPatch
     {
         public static void Postfix(ref bool __result)
         {
-            if (CreativeModeConfig.Instance.RestartAnyDay.Value)
+            if (CreativeModeConfig.Instance.RestartAnyDay.Value && __result == false)
             {
-                RestartAnyDaySystem.Instance.RestartDay();
+                // We need to run some code beforehand to make sure that the game can actually be restarted.
+                RestartAnyDaySystem.Instance?.RestartDay();
+                _changePopup = true;
                 __result = true;
             }
         }
     }
     
+    /// <summary>
+    /// This system does what RescuedByDay usually does when the game can be restarted.
+    /// </summary>
+    private class RestartAnyDaySystem : TweakRestaurantSystem<RestartAnyDaySystem>
+    {
+        public void RestartDay()
+        {
+            World.Add(new COfferRestartDay()
+            {
+                Reason = LossReason.Patience
+            });
+            
+            var query = this.GetEntityQuery(ComponentType.ReadWrite<SKitchenStatus>());
+            var singleton = query.GetSingleton<SKitchenStatus>();
+            query.SetSingleton(new SKitchenStatus()
+            {
+                RemainingLives = singleton.TotalLives,
+                TotalLives = singleton.TotalLives
+            });
+        }
+    }
+    
     [HarmonyPatch(typeof(GlobalLocalisation))]
-    private class GlobalLocalisation_Indexer_Patch
+    private static class ChangeRestartPopupTextPatch
     {
         public static MethodBase TargetMethod()
         {
@@ -42,42 +69,16 @@ public class RestartAnyDayTweak
         
         public static void Postfix(ref PopupDetails __result, PopupType popup_type)
         {
-            if (popup_type == PopupType.RestartRestaurantAfterFailure)
+            if (!_changePopup)
             {
-                // TODO: show this message only if the day was actually restarted because of our mod
+                return;
+            }
+            _changePopup = false;
+            
+            if (popup_type == PopupType.RestartRestaurantAfterFailure && CreativeModeConfig.Instance.RestartAnyDay.Value)
+            {
                 __result.Description = "You can restart the current day because you have the ONe.Tweak mod installed. You can disable this feature in the config.";
             }
-        }
-    }
-
-    private class RestartAnyDaySystem : RestaurantSystem
-    {
-        public static RestartAnyDaySystem Instance { get; private set; }
-
-        public RestartAnyDaySystem()
-        {
-            Instance = this;
-        }
-        
-        protected override void OnUpdate()
-        {
-            
-        }
-
-        public void RestartDay()
-        {
-            World.Add(new COfferRestartDay()
-            {
-                Reason = LossReason.Patience
-            });
-            
-            var query = this.GetEntityQuery(ComponentType.ReadWrite<SKitchenStatus>());
-            var singleton = query.GetSingleton<SKitchenStatus>();
-            query.SetSingleton<SKitchenStatus>(new SKitchenStatus()
-            {
-                RemainingLives = singleton.TotalLives,
-                TotalLives = singleton.TotalLives
-            });
         }
     }
 }
