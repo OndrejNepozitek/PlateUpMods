@@ -23,6 +23,6 @@ public class GhostModeConfig : ConfigSection<GhostModeConfig>
 
     private void ToggleGhostMode()
     {
-        GhostModeTweak.ToggleCollisions();
+        GhostModeTweak.ToggleGhostMode();
     }
 }
