@@ -8,6 +8,9 @@ using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
 
+/// <summary>
+/// This tweak makes it possible to restart any day if you lose.
+/// </summary>
 public static class RestartAnyDayTweak
 {
     private static bool _changePopup;
@@ -20,7 +23,7 @@ public static class RestartAnyDayTweak
     {
         public static void Postfix(ref bool __result)
         {
-            if (CreativeModeConfig.Instance.RestartAnyDay.Value && __result == false)
+            if (CasualModeConfig.Instance.RestartAnyDay.Value && __result == false)
             {
                 // We need to run some code beforehand to make sure that the game can actually be restarted.
                 RestartAnyDaySystem.Instance?.RestartDay();
@@ -52,6 +55,9 @@ public static class RestartAnyDayTweak
         }
     }
     
+    /// <summary>
+    /// This patch changes the text of the popup that is shown when a game can be restarted.
+    /// </summary>
     [HarmonyPatch(typeof(GlobalLocalisation))]
     private static class ChangeRestartPopupTextPatch
     {
@@ -75,7 +81,7 @@ public static class RestartAnyDayTweak
             }
             _changePopup = false;
             
-            if (popup_type == PopupType.RestartRestaurantAfterFailure && CreativeModeConfig.Instance.RestartAnyDay.Value)
+            if (popup_type == PopupType.RestartRestaurantAfterFailure && CasualModeConfig.Instance.RestartAnyDay.Value)
             {
                 __result.Description = "You can restart the current day because you have the ONe.Tweak mod installed. You can disable this feature in the config.";
             }

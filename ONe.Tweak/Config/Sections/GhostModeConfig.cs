@@ -16,7 +16,7 @@ public class GhostModeConfig : ConfigSection<GhostModeConfig>
     public GhostModeConfig(ConfigFile config) : base(config)
     {
         EnableOnPreparationStart = Bind("EnableOnPreparationStart", false, "Whether to enable ghost mode at the start of each day's preparation phase.");
-        DisableOnPreparationEnd = Bind("DisableOnPreparationEnd", true, "Whether to disable ghost made at the end of each day's preparation phase.");
+        DisableOnPreparationEnd = Bind("DisableOnPreparationEnd", true, "Whether to disable ghost mode at the end of each day's preparation phase.");
         ResizeBoundsWhenEnabled = Bind("ResizeBoundsWhenEnabled", true, "Whether to resize map bounds when in ghost mode. Otherwise, the game teleports you to the front door if you leave the walls.");
         BindCommand("ToggleGhostMode", KeyboardShortcut.Empty, ToggleGhostMode ,"Keyboard shortcut for toggling the ghost mode.");
     }

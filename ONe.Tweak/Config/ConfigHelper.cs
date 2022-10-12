@@ -20,6 +20,8 @@ public static class ConfigHelper
             new PreparationPhaseConfig(config),
             new SeparateSeedsConfig(config),
             new CreativeModeConfig(config),
+            new CasualModeConfig(config),
+            new CardsConfig(config),
         };
     }
     
