@@ -1,5 +1,7 @@
 # ONe.Tweak features
 
+This page contains information regarding how to use and configure the **ONe.Tweak** mode. Make sure that you install the mod first.
+
 ## Read first
 
 ### Warning: Do not install the mod in the middle of your best run
@@ -18,7 +20,7 @@ It is recommended to use the Configuration Manager (press F1 when in game) to co
 
 Some features in the mod are actions that you need to trigger manually. For example, if you want to start the practice mode from anywhere. For each such action, you have two options of triggering it. If you open the Configuration Manager window (F1), find the row for the action that you want to trigger. You can click the *Run* button to trigger the action once. Or you can click on the button next to it, which will prompt you for a keyboard shortcut that will trigger the action.
 
-## Separate seeds
+## Tweak: Separate seeds
 
 In vanilla PlateUp!, the map seed determines both the layout of the restaurant and the blueprints, cards, etc. that you get when playing. That means that the several most popular seeds are played again and again because people like the layout. But sometimes, you might want to keep the layout but have a different seed for everything else. That is precisely what this tweak does. When enabled, after you enter your desired seed, the game generates the layout and then will randomly pick a different seed with which you will be playing. Therefore, you can play the same layout repeatedly and always get something new.
 
@@ -52,7 +54,7 @@ FixedSeed =
 ```
 
 
-## Ghost mode
+## Tweak: Ghost mode
 
 Do you feel like you spend more time in preparation phase just moving things around than actually playing the game? Then our *Ghost mode* might be a good choice for you. In *Ghost mode*, you can move through objects, which greatly simplifies the preparation phase.
 
@@ -88,7 +90,7 @@ ResizeBoundsWhenEnabled = true
 ToggleGhostModeKeyboardShortcut = 
 ```
 
-## Preparation phase
+## Tweak: Preparation phase
 
 In vanilla PlateUp!, if you want to start the *Practice mode*, you have to go outside the kitchen. Moreover, when you leave the mode, you get teleported back to the front door. Both these things are a bit annoying if you just want to quickly test an idea. One solution would be to use the [Ghost mode](#ghost-mode), but you can also use the tweaks introduced in this section.
 
@@ -115,7 +117,7 @@ RestorePositionsAfterPractice = true
 StartPracticeKeyboardShortcut = 
 ```
 
-## Casual mode
+## Tweak: Casual mode
 
 If you are looking for a more casual experience while playing PlateUp!, you can enable the *RestartAnyDay* feature which makes it possible to restart any day after your customers' experience runs out. No more losing a run because you forgot to set a smart grabber. It is up to you do decide when you deserve to lose the run.
 
@@ -136,7 +138,7 @@ It is recommended to use the Configuration Manager (press F1 when in game) to co
 RestartAnyDay = true
 ```
 
-## Creative mode (Experimental)
+## Tweak: Creative mode (Experimental)
 
 In order to test some features of this mod, I needed to be able to skip a day. The *SkipDay* feature does exactly that. If you start a new day and trigger it, it will skip to the end of the day. If you trigger without starting the next day, it will replay the the end of the previous day.
 
@@ -155,7 +157,7 @@ It is recommended to use the Configuration Manager (press F1 when in game) to co
 SkipDayKeyboardShortcut = 
 ```
 
-## Cards (Experimental)
+## Tweak: Cards (Experimental)
 
 I wanted to try some franchise runs but did not feel like playing 15 day just to choose from 2 cards that I did not like. Therefore, I tried to come up with a solution that is as vanilla-like as possible. In the end, I decided to make it possible to choose from more cards. For example, you can configure the mod to give you 2 additional cards (4 total) when you reach level 15.
 
@@ -165,7 +167,7 @@ The game is programmed to only show 2 cards at a time. If you want to see the ad
 
 This feature might not work well with the Twitch integration. 
 
-### Multiplayer
+### Tweak: Multiplayer
 
 In multiplayer sessions, this feature must be enabled on the host's side.
 
