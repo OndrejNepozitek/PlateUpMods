@@ -29,7 +29,7 @@ public static class SelectFromMoreCardsTweak
 
         protected override void OnUpdate()
         {
-            if (!CreativeModeConfig.Instance.EnableAdditionalCards.Value)
+            if (!CardsConfig.Instance.EnableAdditionalCards.Value)
             {
                 return;
             }
@@ -41,7 +41,7 @@ public static class SelectFromMoreCardsTweak
             
             if (!this.HasSingleton<CreateNewKitchen.SKitchenFirstFrame>() && day % 3 == 0 && day != 15)
             {
-                for (int i = 0; i < CreativeModeConfig.Instance.AdditionalCustomerDishCards.Value; i++)
+                for (int i = 0; i < CardsConfig.Instance.AdditionalCustomerDishCards.Value; i++)
                 {
                     if (i % 2 == 0)
                     {
@@ -55,7 +55,7 @@ public static class SelectFromMoreCardsTweak
             }
             if (day == 15)
             {
-                for (int i = 0; i < CreativeModeConfig.Instance.AdditionalFranchiseCards.Value; i++)
+                for (int i = 0; i < CardsConfig.Instance.AdditionalFranchiseCards.Value; i++)
                 {
                     this.AddRequest(UnlockGroup.FranchiseCard);
                 }

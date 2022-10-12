@@ -8,6 +8,8 @@ namespace Kitchen.ONe.Tweak.Tweaks;
 
 public static class SeparateKitchenSeedsTweak
 {
+    private static Seed _originalSeed;
+    
     [HarmonyPatch(typeof(SetSeededRunOverride), "CreateMapItem")]
     private static class ChangeLayoutSeedPatch
     {
@@ -40,29 +42,44 @@ public static class SeparateKitchenSeedsTweak
     private class SameSeedFixSystem : TweakRestaurantSystem<SameSeedFixSystem>
     {
         private EntityQuery _seedFixers;
-        private Seed _previousSeed;
+        private Seed? _previousSeed;
 
         protected override void Initialise()
         {
-            _seedFixers = this.GetEntityQuery((ComponentType) typeof (CSeededRunInfo));
+            _seedFixers = GetEntityQuery((ComponentType) typeof (CSeededRunInfo));
         }
 
         protected override void OnUpdate()
         {
+            if (!SeparateSeedsConfig.Instance.Enabled.Value)
+            {
+                _previousSeed = null;
+                return;
+            }
+            
             if (_seedFixers.IsEmpty)
             {
                 return;
             }
-            
-            var cSeededRunInfo = _seedFixers.First<CSeededRunInfo>();
+
+            var seedFixer = _seedFixers.First();
+            var cSeededRunInfo = EntityManager.GetComponentData<CSeededRunInfo>(seedFixer);
             var fixedSeed = cSeededRunInfo.FixedSeed;
 
-            if (fixedSeed != _previousSeed)
+            if (cSeededRunInfo.IsSeedOverride && _previousSeed != fixedSeed && _previousSeed != null)
             {
-                Console.WriteLine($"Detected new seed: {fixedSeed.StrValue}");
-            }
+                _originalSeed = fixedSeed;
+                cSeededRunInfo.FixedSeed = Kitchen.Seed.Generate(new Random().Next());
+                EntityManager.SetComponentData(seedFixer, cSeededRunInfo);
+                
+                Console.WriteLine($"Detected new seed: {fixedSeed.StrValue}, replaced it with {cSeededRunInfo.FixedSeed.StrValue}");
 
-            _previousSeed = fixedSeed;
+                _previousSeed = cSeededRunInfo.FixedSeed;
+            }
+            else
+            {
+               _previousSeed = fixedSeed; 
+            }
         }
     }
 }
