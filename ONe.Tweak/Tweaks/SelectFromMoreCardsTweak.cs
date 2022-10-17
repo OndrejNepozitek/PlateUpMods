@@ -5,6 +5,9 @@ using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
 
+/// <summary>
+/// This is an experimental tweak that makes it possible to choose from additional cards.
+/// </summary>
 public static class SelectFromMoreCardsTweak
 {
     private static bool _showNextCard;
@@ -15,6 +18,9 @@ public static class SelectFromMoreCardsTweak
         _showNextCard = true;
     }
     
+    /// <summary>
+    /// This system creates additional CProgressionRequest requests.
+    /// </summary>
     [UpdateInGroup(typeof (EndOfDayProgressionGroup), OrderFirst = true)]
     [UpdateAfter(typeof(CreateProgressionRequests))]
     private class SelectMoreCards : StartOfNightSystem
@@ -68,6 +74,9 @@ public static class SelectFromMoreCardsTweak
         });
     }
     
+    /// <summary>
+    /// This system makes it possible to cycle through all the available cards.
+    /// </summary>
     private class CycleCards : NightSystem
     {
         protected override void OnUpdate()
@@ -106,6 +115,9 @@ public static class SelectFromMoreCardsTweak
         }
     }
     
+    /// <summary>
+    /// This system refreshes the popup when a different pair of cards should be shown.
+    /// </summary>
     [HarmonyPatch(typeof(UnlockSelectPopupView), "UpdateData")] 
     private static class UnlockSelectPopupViewPatch
     {
@@ -120,26 +132,4 @@ public static class SelectFromMoreCardsTweak
             ___IsUpdated = false;
         }
     }
-    
-    // [HarmonyPatch(typeof(CreateUnlockChoicePopup), "OnUpdate")]
-    // private static class RemoveChoiceBeforePopupPatch
-    // {
-    //     public static void Prefix(CreateUnlockChoicePopup __instance)
-    //     {
-    //         var entityManager = __instance.EntityManager;
-    //         var progressionOptions = entityManager.CreateEntityQuery(new QueryHelper().All((ComponentType) typeof (CProgressionOption)).None((ComponentType) typeof (CProgressionOption.Displayed)));
-    //
-    //         if (progressionOptions.IsEmpty)
-    //         {
-    //             return;
-    //         }
-    //
-    //         using var entities = progressionOptions.ToEntityArray(Allocator.Temp);
-    //
-    //         for (int i = 0; i < UPPER; i++)
-    //         {
-    //             
-    //         }
-    //     }
-    // }
 }

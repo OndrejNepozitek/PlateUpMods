@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using BepInEx.Configuration;
 using Kitchen.ONe.Tweak.Config.Sections;
 using Kitchen.ONe.Tweak.Tweaks;
-using ONe.Tweak;
 using UnityEngine;
 
 namespace Kitchen.ONe.Tweak.Config;
