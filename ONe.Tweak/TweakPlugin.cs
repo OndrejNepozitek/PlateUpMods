@@ -1,10 +1,9 @@
-using System;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
 using Kitchen.ONe.Tweak.Config;
 
-namespace ONe.Tweak;
+namespace Kitchen.ONe.Tweak;
 
 [BepInPlugin(Guid, Name, Version)]
 [BepInProcess("PlateUp.exe")]

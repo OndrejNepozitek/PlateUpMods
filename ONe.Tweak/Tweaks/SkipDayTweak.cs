@@ -1,22 +1,27 @@
 using System;
 using HarmonyLib;
-using ONe.Tweak;
 using Unity.Entities;
 
 namespace Kitchen.ONe.Tweak.Tweaks;
 
+/// <summary>
+/// This tweak makes it possible to skip a day.
+/// </summary>
 public static class SkipDayTweak
 {
-    private static bool _shouldRun = false;
+    private static bool _shouldRun;
     
     public static void Run()
     {
         _shouldRun = true;
     }
 
+    /// <summary>
+    /// This system makes it possible to skip a day when requested.
+    /// </summary>
     [UpdateInGroup(typeof (TimeManagementGroup))]
     [UpdateAfter(typeof(AdvanceTime))]
-    public class SkipDaySystem : RestaurantSystem
+    private class SkipDaySystem : RestaurantSystem
     {
         protected override void OnUpdate()
         {
