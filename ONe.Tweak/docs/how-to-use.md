@@ -10,7 +10,7 @@ Every software has bugs. Make sure that you try the mod with a run that you do n
 
 ### Warning: Some tweaks are enabled by default
 
-I decided to enable some tweaks by default to improve the experience of using the mod. For example, the *RestartAnyDay* feature of the [Casual mode](#casual-mode) is enabled by default to make sure that you do not accidentally lose your run thinking that it is enabled. Feel free configure the mod any way you like.
+I decided to enable some tweaks by default to improve the experience of using the mod. For example, the *RestartAnyDay* feature of the [Casual mode](#tweak--casual-mode) is enabled by default to make sure that you do not accidentally lose your run thinking that it is enabled. Feel free configure the mod any way you like.
 
 ### How to configure
 
