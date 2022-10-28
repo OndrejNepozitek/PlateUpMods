@@ -61,7 +61,7 @@ public static class KitchenDesignLoader
 
             _seed = string.IsNullOrWhiteSpace(seed)
                 ? Seed.Generate(new System.Random().Next())
-                : new Seed(seed);
+                : new Seed(seed.ToLower());
             
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             var query = entityManager.CreateEntityQuery((ComponentType)typeof(CSeededRunInfo));

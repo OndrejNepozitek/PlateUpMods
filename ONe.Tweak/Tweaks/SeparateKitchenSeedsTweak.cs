@@ -58,7 +58,7 @@ public static class SeparateKitchenSeedsTweak
             var seededRunInfo = entityManager.GetComponentData<CSeededRunInfo>(seedFixer);
             seed = string.IsNullOrWhiteSpace(SeparateSeedsConfig.Instance.FixedSeed.Value) || SeparateSeedsConfig.Instance.UseRandomSeed.Value
                 ? Seed.Generate(new Random().Next())
-                : new Seed(SeparateSeedsConfig.Instance.FixedSeed.Value);
+                : new Seed(SeparateSeedsConfig.Instance.FixedSeed.Value.ToLower());
             seededRunInfo.FixedSeed = seed;
             _customSeed = seed;
             entityManager.SetComponentData(seedFixer, seededRunInfo);
