@@ -1,6 +1,6 @@
-# ONe.Tweak features
+# How to use (ONe.Tweak)
 
-This page contains information regarding how to use and configure the **ONe.Tweak** mode. Make sure that you install the mod first.
+This page contains information regarding how to use and configure the **ONe.Tweak** mod. Make sure that you install the mod first.
 
 ## Read first
 
