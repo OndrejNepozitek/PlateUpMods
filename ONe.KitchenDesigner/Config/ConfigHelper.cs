@@ -20,6 +20,7 @@ public static class ConfigHelper
     private static State _kitchenDesignState = State.NoDesignProvided;
     private static Stopwatch _layoutGeneratedStopwatch = new Stopwatch();
     private static KitchenDesign _kitchenDesign;
+    private static string _kitchenDesignMessage;
     
     private static readonly State[] FailureStates = new State[]
     {
@@ -74,7 +75,7 @@ public static class ConfigHelper
 
         if (hasChanges)
         {
-            KitchenDesignDecoder.TryDecode(_kitchenDesignValue, out _kitchenDesign);
+            KitchenDesignDecoder.TryDecode(_kitchenDesignValue, out _kitchenDesign, out _kitchenDesignMessage);
         }
         
         if (!hasPedestal)
@@ -122,7 +123,7 @@ public static class ConfigHelper
             if (_kitchenDesign == null)
             {
                 _kitchenDesignState = State.KitchenDesignCouldNotBeLoaded;
-                _kitchenDesignStatusText = "Kitchen Design could not be loaded - the description is not valid. Please check that you copied it correctly. Also check the console.";
+                _kitchenDesignStatusText = "Kitchen Design could not be loaded. Please check that you copied it correctly. Also check the console.\n\nError: " + _kitchenDesignMessage;
             }
             else if (hasChanges || (_kitchenDesignState != State.GeneratingSuccess && _kitchenDesignState != State.GeneratingFailure))
             {
@@ -155,16 +156,17 @@ public static class ConfigHelper
             if (GUILayout.Button("Generate kitchen layout"))
             {
                 _kitchenDesignState = State.GeneratingLayout;
+                KitchenDesignDecoder.TryDecode(_kitchenDesignValue, out var kitchenDesignNew, out _);
+                var kitchenDesign = kitchenDesignNew ?? _kitchenDesign;
                 var seed = _useRandomSeedConfig.Value ? null : _fixedSeed.Value;
-                KitchenDesignLoader.LoadKitchenDesign(_kitchenDesign, seed);
+                KitchenDesignLoader.LoadKitchenDesign(kitchenDesign, seed);
             }
         }
         else
         {
             GUILayout.Button("Cannot generate kitchen layout - see status above");
         }
-
-
+        
         GUILayout.EndVertical();
     }
 
