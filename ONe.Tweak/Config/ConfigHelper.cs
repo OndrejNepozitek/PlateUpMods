@@ -16,7 +16,6 @@ public static class ConfigHelper
         _configSections = new List<ConfigSection>()
         {
             new GhostModeConfig(config),
-            new PreparationPhaseConfig(config),
             new SeparateSeedsConfig(config),
             new CreativeModeConfig(config),
             new CasualModeConfig(config),
