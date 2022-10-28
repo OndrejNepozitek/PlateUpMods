@@ -90,13 +90,6 @@ ResizeBoundsWhenEnabled = true
 ToggleGhostModeKeyboardShortcut = 
 ```
 
-## Tweak: Preparation phase
-
-In vanilla PlateUp!, if you want to start the *Practice mode*, you have to go outside the kitchen. Moreover, when you leave the mode, you get teleported back to the front door. Both these things are a bit annoying if you just want to quickly test an idea. One solution would be to use the [Ghost mode](#ghost-mode), but you can also use the tweaks introduced in this section.
-
-- *RestorePositionsAfterPractice* - The game will restore the player positions as they were before the end of the practice mode
-- *StartPracticeKeyboardShortcut* - You can bind practice mode start to any key.
-
 ### Multiplayer
 
 In multiplayer sessions, this feature must be enabled on the host's side and only the host can start the preparation phase via the shortcut/button. Other clients do not need to have the mod installed for this feature to work.
