@@ -55,6 +55,9 @@ public static class KitchenDesignLoader
         try
         {
             IsGenerating = true;
+            ShouldPatchDecorations = false;
+            ShouldPatchCreateSeededRun = false;
+            IsWaitingForSetSeededRunUpdate = false;
 
             _kitchenDesign = kitchenDesign;
             PostProcessDesign(kitchenDesign);
@@ -81,8 +84,9 @@ public static class KitchenDesignLoader
                 IsWaitingForSetSeededRunUpdate = true;
             }
         }
-        catch
+        catch (Exception e)
         {
+            KitchenDesigner.Log.LogError(e.Message);
             IsGenerating = false;
             WasLastGenerationSuccessful = false;
         }
@@ -90,20 +94,27 @@ public static class KitchenDesignLoader
 
     internal static void SetSeededRunUpdated()
     {
+        UpdateCSeededRunInfo(true, Seed.Generate(new System.Random().Next()));
         ShouldPatchDecorations = true;
         ShouldPatchCreateSeededRun = true;
-        
+    }
+
+    private static void UpdateCSeededRunInfo(bool isSeedOverride, Seed fixedSeed)
+    {
         var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
         var query = entityManager.CreateEntityQuery((ComponentType)typeof(CSeededRunInfo));
         var seededRunInfoEntity = query.First();
         var seededRunInfo = entityManager.GetComponentData<CSeededRunInfo>(seededRunInfoEntity);
-        seededRunInfo.IsSeedOverride = true;
-        seededRunInfo.FixedSeed = _seed;
+        seededRunInfo.IsSeedOverride = isSeedOverride;
+        seededRunInfo.FixedSeed = fixedSeed;
         entityManager.SetComponentData(seededRunInfoEntity, seededRunInfo);
     }
 
-    internal static void LoadKitchenDesign(Seed seed, Entity pedestal)
+    internal static void LoadKitchenDesign(Entity pedestal)
     {
+        var seed = _seed;
+        UpdateCSeededRunInfo(true, _seed);
+
         try
         {
             var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -142,6 +153,13 @@ public static class KitchenDesignLoader
             IsGenerating = false;
             throw;
         }
+        finally
+        {
+            if (!WasLastGenerationSuccessful)
+            {
+                UpdateCSeededRunInfo(false, _seed);
+            }
+        }
     }
 
     private static Entity ConstructLayout(
@@ -175,7 +193,7 @@ public static class KitchenDesignLoader
 
         if (!flag || layoutDecorator?.Decorations == null)
         {
-            KitchenDesigner.Log.LogDebug($"Giving up after {(object)CreateLayoutHelper.MapAttemptsMax} attempts");
+            KitchenDesigner.Log.LogInfo($"Giving up after {(object)CreateLayoutHelper.MapAttemptsMax} attempts");
             em.DestroyEntity(entity);
             return new Entity();
         }

@@ -15,7 +15,7 @@ public class SetSeededRunOverridePatch_CreateSeededRun
         }
 
         KitchenDesignLoader.ShouldPatchCreateSeededRun = false;
-        KitchenDesignLoader.LoadKitchenDesign(seed, pedestal);
+        KitchenDesignLoader.LoadKitchenDesign(pedestal);
         
         return false;
     }
