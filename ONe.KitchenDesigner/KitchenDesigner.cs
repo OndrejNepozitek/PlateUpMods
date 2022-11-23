@@ -11,7 +11,7 @@ public class KitchenDesigner : BaseUnityPlugin
 {
     private const string Guid = "ONe.KitchenDesigner";
     private const string Name = "ONe.KitchenDesigner";
-    private const string Version = "1.0.1";
+    private const string Version = "1.0.2";
     
     internal static ManualLogSource Log;
 
