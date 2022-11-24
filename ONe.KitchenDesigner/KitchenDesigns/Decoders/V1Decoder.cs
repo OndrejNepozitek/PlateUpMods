@@ -123,7 +123,7 @@ public static class V1Decoder
         if (index == 0)
         {
             var random = new Random();
-            index = random.Next(1, 4);
+            index = random.Next(1, 6);
         }
         
         var indexToIdMapping = new Dictionary<int, int>()
@@ -131,6 +131,8 @@ public static class V1Decoder
             { 1, 2002876295 }, // City
             { 2, 447437163 }, // Country
             { 3, -1864906012 }, // Alpine
+            { 4, 82131534 },//Halloween
+            { 5,-405456638 }//Autumn
         };
 
         if (!indexToIdMapping.TryGetValue(index, out var id))
