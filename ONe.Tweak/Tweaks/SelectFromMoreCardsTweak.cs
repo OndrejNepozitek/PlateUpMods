@@ -22,7 +22,7 @@ public static class SelectFromMoreCardsTweak
     /// This system creates additional CProgressionRequest requests.
     /// </summary>
     [UpdateInGroup(typeof (EndOfDayProgressionGroup), OrderFirst = true)]
-    [UpdateAfter(typeof(CreateProgressionRequests))]
+    // [UpdateAfter(typeof(CreateProgressionRequests))]
     private class SelectMoreCards : StartOfNightSystem
     {
         private EntityQuery _singletonEntityQuerySDay54;
