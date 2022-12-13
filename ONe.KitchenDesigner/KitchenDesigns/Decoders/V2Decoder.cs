@@ -130,7 +130,9 @@ public static class V2Decoder
             {
                 2002876295,
                 447437163,
-                -1864906012
+                -1864906012,
+                82131534,
+                -405456638
             };
             
             var randomIndex = _random.Next(knownSettingIds.Count);
