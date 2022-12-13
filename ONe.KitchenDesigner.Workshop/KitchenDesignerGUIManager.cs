@@ -23,7 +23,7 @@ public class KitchenDesignerGUIManager : MonoBehaviour
     private Rect CalculateWindowRect()
     {
         var width = Mathf.Min(Screen.width, 650);
-        var height = Mathf.Min(Screen.height, 300);
+        var height = Mathf.Min(Screen.height, 350);
         var offsetX = Mathf.RoundToInt((Screen.width - width) / 2f);
         var offsetY = Mathf.RoundToInt((Screen.height - height) / 2f);
         return new Rect(offsetX, offsetY, width, height);

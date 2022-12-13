@@ -12,7 +12,7 @@ namespace ONe.KitchenDesigner.Workshop
         
         public static KitchenDesignerGUIManager KitchenDesignerGUIManager { get; private set; }
         
-        public void PostActivate()
+        public void PostActivate(Mod mod)
         {
             
         }

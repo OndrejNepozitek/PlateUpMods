@@ -8,6 +8,8 @@ using Kitchen.Layouts.Features;
 using KitchenData;
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
+using Random = System.Random;
 
 namespace ONe.KitchenDesigner.KitchenDesigns.Decoders;
 
@@ -17,8 +19,7 @@ public static class V2Decoder
     
     public static KitchenDesign Load(string encoded)
     {
-        var decodedBytes = Convert.FromBase64String(encoded.Substring(1));
-        var decoded = Encoding.UTF8.GetString(decodedBytes);
+        var decoded = DecoderUtils.Base64UrlDecode(encoded.Substring(1));
         var sections = decoded.Split(':');
         
         // Layout profile

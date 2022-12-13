@@ -12,8 +12,7 @@ public static class V1Decoder
 {
     public static KitchenDesign Load(string encoded)
     {
-        var decodedBytes = Convert.FromBase64String(encoded.Substring(1));
-        var decoded = Encoding.UTF8.GetString(decodedBytes);
+        var decoded = DecoderUtils.Base64UrlDecode(encoded.Substring(1));
         var sections = decoded.Split(':');
         
         // Layout profile

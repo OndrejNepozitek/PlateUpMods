@@ -190,7 +190,7 @@ public static class KitchenDesignerWindow
 
         GUILayout.Label("Copy your Exported Kitchen Design Description in the text area below:");
         
-        var newDesignValue = GUILayout.TextArea(_kitchenDesignValue, GUILayout.Height(70));
+        var newDesignValue = GUILayout.TextArea(_kitchenDesignValue, GUILayout.Height(100));
         var hasChanges = newDesignValue != _kitchenDesignValue;
         _kitchenDesignValue = newDesignValue;
 
