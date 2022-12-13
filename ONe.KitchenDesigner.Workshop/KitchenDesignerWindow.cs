@@ -13,9 +13,11 @@ public static class KitchenDesignerWindow
     private static State _state = State.Initial;
     private static readonly Stopwatch LayoutGeneratedStopwatch = new();
     private static KitchenDesign _kitchenDesign;
+    
     private static string _kitchenDesignMessage;
     private static bool _useRandomSeed = true;
     private static string _fixedSeed;
+    public static bool LargeLayoutSupport { get; private set; }
 
     private static readonly List<State> ErrorStates = new()
     {
@@ -238,13 +240,18 @@ public static class KitchenDesignerWindow
         GUILayout.FlexibleSpace();
         
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Fixed seed");
+        GUILayout.Label("Fixed seed", GUILayout.Width(350));
         _fixedSeed = GUILayout.TextField(_fixedSeed, GUILayout.ExpandWidth(true));
         GUILayout.EndHorizontal();
         
         GUILayout.BeginHorizontal();
-        GUILayout.Label("Use random seed");
+        GUILayout.Label("Use random seed", GUILayout.Width(350));
         _useRandomSeed = GUILayout.Toggle(_useRandomSeed, _useRandomSeed ? "Enabled" : "Disabled", GUILayout.ExpandWidth(true));
+        GUILayout.EndHorizontal();
+        
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Large layout support (experimental)", GUILayout.Width(350));
+        LargeLayoutSupport = GUILayout.Toggle(LargeLayoutSupport, LargeLayoutSupport ? "Enabled" : "Disabled", GUILayout.ExpandWidth(true));
         GUILayout.EndHorizontal();
         
         GUILayout.EndVertical();
