@@ -163,7 +163,7 @@ public static class KitchenDesignerWindow
             case State.DesignProvided:
                 return $"Unexpected state ({State.DesignProvided})";
             case State.LayoutNotLoaded:
-                return "Kitchen Design could not be loaded. Please check that you copied it correctly. Also check the log/console.\n\nError: " + _kitchenDesignMessage;;
+                return "Kitchen Design could not be loaded. Please check that you copied it correctly. Also check the log.\n\nError: " + _kitchenDesignMessage;;
             case State.LayoutLoaded:
                 return "Kitchen Design loaded, you can click the button below.";
             case State.LayoutGenerating:
